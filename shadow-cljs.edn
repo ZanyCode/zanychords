@@ -1,0 +1,15 @@
+{:lein   true
+
+ :nrepl {:port 8777}
+
+ :builds {:app {:target          :browser
+                :closure-defines {"re_frame.trace.trace_enabled_QMARK_" true}
+                :output-dir      "resources/public/js/compiled"
+                :asset-path      "/js/compiled"
+                :modules         {:app {:init-fn zanychords.core/init
+                                        :preloads [devtools.preload day8.re-frame-10x.preload]                                        
+                                        :main "zanychords.core"}}
+                
+                :devtools        {:http-root    "resources/public"
+                                  :http-port    8280
+                                  }}}}
