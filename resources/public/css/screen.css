@@ -1,5 +1,5 @@
 body {
-  color: red;
+  margin: 0px;
 }
 
 .rbmargin {
@@ -11,4 +11,16 @@ body {
   position: fixed !important;
   right: 20px;
   bottom: 20px;
+}
+
+.fullwidth {
+  width: 100% !important;
+}
+
+.margin10 {
+  margin: 10px;
+}
+
+.hideoverflow {
+  overflow: hidden;
 }

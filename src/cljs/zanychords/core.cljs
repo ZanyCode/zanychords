@@ -13,8 +13,6 @@
   (when config/debug?
     (println "dev mode")))
 
-
-
 (defn ^:export init []
   (k/start!  {:routes         [["/" :main]
                                ["/progressions" :progressions]
@@ -23,3 +21,4 @@
               :initial-db     {:progressions []}
               :root-component [views/main-panel]
               :debug?         true}))
+  (re-frame/dispatch-sync [::events/initialize-db])

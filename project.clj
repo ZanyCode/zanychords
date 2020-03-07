@@ -10,6 +10,7 @@
                  [garden "1.3.9"]
                  [ns-tracker "0.4.0"]
                  [day8.re-frame/re-frame-10x "0.5.2"]
+                 [akiroz.re-frame/storage "0.1.4"]
                  [kee-frame "0.3.4"]]
 
   :plugins [[lein-garden "0.3.0"]

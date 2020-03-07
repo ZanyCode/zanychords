@@ -1,8 +1,8 @@
 (ns zanychords.subs
   (:require
-   [re-frame.core :as re-frame]))
+   [re-frame.core :as rf]))
 
-(re-frame/reg-sub
- ::name
+(rf/reg-sub
+ ::progressions
  (fn [db]
-   (:name db)))
+   (:progressions db)))
