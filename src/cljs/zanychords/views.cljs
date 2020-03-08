@@ -20,9 +20,11 @@
    ["@material-ui/core/CardContent" :default CardContent]
    ["@material-ui/core/TextField" :default TextField]
    ["@material-ui/core/Button" :default Button]
+   ["@material-ui/core/MenuItem" :default MenuItem]
    ["@material-ui/core/Grid" :default Grid]
    ["@material-ui/icons/Add" :default AddIcon]
    ["@material-ui/icons/Delete" :default DeleteIcon]
+   ["react-select" :default Select]
    [kee-frame.core :as k]))
 
 ;There seems to be a bug where using the :> shortcut for react components causes a weird error ("Cannot convert a Symbol value to a string") so we just create our own shortcut with blackjack and... you know.
@@ -56,6 +58,40 @@
                                 (reset! progression {:title "" :chords ""}))}
          "Cancel"]]])))
 
+(defn add-session-dlg [is-open on-close on-progression-added]
+  (let [session (r/atom {:title "" :progressions ""})
+        progressions (rf/subscribe [::subs/progressions])]
+
+    (fn [is-open on-close on-progression-added]
+      [:> Dialog {:open is-open :on-close on-close :full-width true}
+       [:> DialogTitle "Add Session"]
+       [:> TextField {:label "Session Title" :style {:margin-left "20px" :margin-right "20px"}
+                      :on-change #(swap! session assoc :title (-> % .-target .-value))
+                      :value (:title @session)}]
+
+       [:div {:style {:margin-left "20px" :margin-right "20px" :margin-top "10px"}}
+        [:> Select {:menu-portal-target (.-body js/document)
+                    :menu-position "fixed"
+                    :menu-placement "auto"
+                    :is-multi true
+                    :placeholder "Select Progressions"
+                    :styles {:menu-portal #(-> % js->clj (assoc :zIndex 9999) clj->js)}
+                    :options (map (fn [p] {:label (:title p) :value p}) @progressions)}]]
+
+       [:> Grid {:container true :direction "row" :justify "flex-end" :align-items "center"}
+        [:> Button {:color "primary" :class "rbmargin"
+                    :on-click (fn []
+                                (on-close)
+                                (reset! session {:title "" :progressions []}))}
+         "OK"]
+
+
+        [:> Button {:color "default" :class "rbmargin"
+                    :on-click (fn []
+                                (on-close)
+                                (reset! session {:title "" :progressions []}))}
+         "Cancel"]]])))
+
 
 (defn progressions []
   (let [add-dlg-open (r/atom false)
@@ -64,7 +100,7 @@
       [:div {:class "hideoverflow"}
        ; Main list with existing progressions
        [:> Grid {:container true :spacing 3 :justify "center"}
-        [:> Grid {:item true :xs "12" :sm "6"}
+        [:> Grid {:item true :xs 12 :sm 6}
          [:> Card {:class "margin10"}
           [:> CardContent
            [:> List
@@ -83,6 +119,31 @@
         #(reset! add-dlg-open false)
         #(rf/dispatch [::events/add-progression %])]])))
 
+(defn sesssions []
+  (let [add-dlg-open (r/atom false)
+        progressions (rf/subscribe [::subs/progressions])]
+    (fn []
+      [:div {:class "hideoverflow"}
+       ; Main list with existing progressions
+       [:> Grid {:container true :spacing 3 :justify "center"}
+        [:> Grid {:item true :xs 12 :sm 6}
+         [:> Card {:class "margin10"}
+          [:> CardContent
+           [:> List
+            (for [[i, progression] (map-indexed vector @progressions)]
+              [(arc ListItem) {:key i}
+               [(arc ListItemText) {:primary (:title progression) :secondary (str/join "," (:chords progression))}]
+               [(arc Button) {:on-click #(rf/dispatch [::events/delete-progression (:title progression)])} [(arc DeleteIcon)]]])]]]]]
+
+
+       ; Floating Action Button to add new progression
+       [:> Fab {:color :primary :on-click #(reset! add-dlg-open true) :class "floatrightbottom"}
+        [:> AddIcon]]
+
+       ; Dialog for adding new Progression
+       [add-session-dlg @add-dlg-open
+        #(reset! add-dlg-open false)
+        #(rf/dispatch [::events/add-progression %])]])))
 
 (defn main-panel []
   (let []
@@ -101,5 +162,5 @@
       nil [:span "INVALID ROUTE"]
       :main [:span "main"]
       :progressions [progressions]
-      :sessions [:span "Sessions"]
+      :sessions [sesssions]
       :practice [:span "Practice"]]]))
