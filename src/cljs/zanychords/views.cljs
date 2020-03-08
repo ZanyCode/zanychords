@@ -35,62 +35,74 @@
     (fn [is-open on-close on-progression-added]
       [:> Dialog {:open is-open :on-close on-close :full-width true}
        [:> DialogTitle "Add Progression"]
-       [:> TextField {:label "Progression Title" :style {:margin-left "20px" :margin-right "20px"}
-                      :on-change #(swap! progression assoc :title (-> % .-target .-value))
-                      :value (:title @progression)}]
-
-       [:> TextField {:label "Progression Content (Comma Separated)" :style {:margin-left "20px" :margin-right "20px"}
-                      :on-change #(swap! progression assoc :chords (-> % .-target .-value))
-                      :value (:chords @progression)}]
-
-       [:> Grid {:container true :direction "row" :justify "flex-end" :align-items "center"}
-        [:> Button {:color "primary" :class "rbmargin"
-                    :on-click (fn []
-                                (on-close)
-                                (on-progression-added @progression)
-                                (reset! progression {:title "" :chords ""}))}
-         "OK"]
-
-
-        [:> Button {:color "default" :class "rbmargin"
-                    :on-click (fn []
-                                (on-close)
-                                (reset! progression {:title "" :chords ""}))}
-         "Cancel"]]])))
+       [:> Grid {:container true :spacing 2 :style {:width "100%" :flex-grow 1 :margin "0px"}}
+        [:> Grid {:item true :xs 12}
+         [:> TextField {:label "Progression Title"
+                        :class "gridchild"
+                        :on-change #(swap! progression assoc :title (-> % .-target .-value))
+                        :value (:title @progression)}]]
+        [:> Grid {:item true :xs 12}
+         [:> TextField {:label "Chords (Comma Separated)"
+                        :class "gridchild"
+                        :on-change #(swap! progression assoc :chords (-> % .-target .-value))
+                        :value (:chords @progression)}]]
+        [:> Grid {:item true :xs 4 :sm 8}]
+        [:> Grid {:item true :xs 4 :sm 2}
+         [:> Button {:color "primary" :class "gridchild"
+                     :on-click (fn []
+                                 (on-close)
+                                 (on-progression-added @progression)
+                                 (reset! progression {:title "" :chords ""}))}
+          "OK"]]
+        [:> Grid {:item true :xs 4 :sm 2}
+         [:> Button {:color "default" :class "gridchild"
+                     :on-click (fn []
+                                 (on-close)
+                                 (reset! progression {:title "" :chords ""}))}
+          "Cancel"]]]])))
 
 (defn add-session-dlg [is-open on-close on-progression-added]
-  (let [session (r/atom {:title "" :progressions ""})
+  (let [session (r/atom {:title "" :progressions []})
+        titles (r/atom [])
         progressions (rf/subscribe [::subs/progressions])]
 
     (fn [is-open on-close on-progression-added]
       [:> Dialog {:open is-open :on-close on-close :full-width true}
        [:> DialogTitle "Add Session"]
-       [:> TextField {:label "Session Title" :style {:margin-left "20px" :margin-right "20px"}
-                      :on-change #(swap! session assoc :title (-> % .-target .-value))
-                      :value (:title @session)}]
-
-       [:div {:style {:margin-left "20px" :margin-right "20px" :margin-top "10px"}}
-        [:> Select {:menu-portal-target (.-body js/document)
-                    :menu-position "fixed"
-                    :menu-placement "auto"
-                    :is-multi true
-                    :placeholder "Select Progressions"
-                    :styles {:menu-portal #(-> % js->clj (assoc :zIndex 9999) clj->js)}
-                    :options (map (fn [p] {:label (:title p) :value p}) @progressions)}]]
-
-       [:> Grid {:container true :direction "row" :justify "flex-end" :align-items "center"}
-        [:> Button {:color "primary" :class "rbmargin"
-                    :on-click (fn []
-                                (on-close)
-                                (reset! session {:title "" :progressions []}))}
-         "OK"]
-
-
-        [:> Button {:color "default" :class "rbmargin"
-                    :on-click (fn []
-                                (on-close)
-                                (reset! session {:title "" :progressions []}))}
-         "Cancel"]]])))
+       [:> Grid {:container true :spacing 2 :style {:width "100%" :flex-grow 1 :margin "0px"}}
+        [:> Grid {:item true :xs 12}
+         [:> TextField {:label "Session Title"
+                        :class "gridchild"
+                        :on-change #(swap! session assoc :title (-> % .-target .-value))
+                        :value (:title @session)}]]
+        [:> Grid {:item true :xs 12}
+         [:> Select {:menu-portal-target (.-body js/document)
+                     :menu-position "fixed"
+                     :menu-placement "auto"
+                     :is-multi true
+                     :class "gridchild"
+                     :placeholder "Select Progressions"
+                     :value (:progressions @session)
+                     :on-change #(swap! session assoc :progressions %)   
+                     :styles {:menu-portal #(-> % js->clj (assoc :zIndex 9999) clj->js)}
+                     :options (map (fn [p] {:label (:title p) :value p}) @progressions)}]]
+        
+        [:> Grid {:item true :xs 4 :sm 8}]
+        [:> Grid {:item true :xs 4 :sm 2}
+         [:> Button {:color "primary"
+                     :class "gridchild"
+                     :on-click (fn []
+                                 (on-close)
+                                 (reset! session {:title "" :progressions []}))}
+          "OK"]]
+        
+        [:> Grid {:item true :xs 4 :sm 2}
+         [:> Button {:color "default"
+                     :class "gridchild"
+                     :on-click (fn []
+                                 (on-close)
+                                 (reset! session {:title "" :progressions []}))}
+          "Cancel"]]]])))
 
 
 (defn progressions []
@@ -109,7 +121,6 @@
                [(arc ListItemText) {:primary (:title progression) :secondary (str/join "," (:chords progression))}]
                [(arc Button) {:on-click #(rf/dispatch [::events/delete-progression (:title progression)])} [(arc DeleteIcon)]]])]]]]]
 
-
        ; Floating Action Button to add new progression
        [:> Fab {:color :primary :on-click #(reset! add-dlg-open true) :class "floatrightbottom"}
         [:> AddIcon]]
@@ -124,7 +135,7 @@
         progressions (rf/subscribe [::subs/progressions])]
     (fn []
       [:div {:class "hideoverflow"}
-       ; Main list with existing progressions
+       ; Main list with existing session
        [:> Grid {:container true :spacing 3 :justify "center"}
         [:> Grid {:item true :xs 12 :sm 6}
          [:> Card {:class "margin10"}

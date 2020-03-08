@@ -24,3 +24,7 @@ body {
 .hideoverflow {
   overflow: hidden;
 }
+
+.gridchild {
+  width: 100%;
+}

@@ -8,4 +8,5 @@
   [:.fullwidth {:width "100% !important"}]
   [:.margin10 {:margin "10px"}]
   [:.hideoverflow {:overflow "hidden"}]
+  [:.gridchild {:width "100%"}]
   )
