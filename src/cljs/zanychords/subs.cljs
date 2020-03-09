@@ -6,3 +6,9 @@
  ::progressions
  (fn [db]
    (:progressions db)))
+
+(rf/reg-sub
+ ::sessions
+ (fn [db]
+   (:sessions db)))
+

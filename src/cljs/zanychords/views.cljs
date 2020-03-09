@@ -21,9 +21,11 @@
    ["@material-ui/core/TextField" :default TextField]
    ["@material-ui/core/Button" :default Button]
    ["@material-ui/core/MenuItem" :default MenuItem]
+   ["@material-ui/lab/ToggleButton" :default ToggleButton]
    ["@material-ui/core/Grid" :default Grid]
    ["@material-ui/icons/Add" :default AddIcon]
    ["@material-ui/icons/Delete" :default DeleteIcon]
+   ["@material-ui/icons/Shuffle" :default ShuffleIcon]
    ["react-select" :default Select]
    [kee-frame.core :as k]))
 
@@ -62,19 +64,19 @@
           "Cancel"]]]])))
 
 (defn add-session-dlg [is-open on-close on-progression-added]
-  (let [session (r/atom {:title "" :progressions []})
-        titles (r/atom [])
+  (let [session-title (r/atom "")
+        selected-progression-titles (r/atom [])
         progressions (rf/subscribe [::subs/progressions])]
 
-    (fn [is-open on-close on-progression-added]
+    (fn [is-open on-close on-session-added]
       [:> Dialog {:open is-open :on-close on-close :full-width true}
        [:> DialogTitle "Add Session"]
        [:> Grid {:container true :spacing 2 :style {:width "100%" :flex-grow 1 :margin "0px"}}
         [:> Grid {:item true :xs 12}
          [:> TextField {:label "Session Title"
                         :class "gridchild"
-                        :on-change #(swap! session assoc :title (-> % .-target .-value))
-                        :value (:title @session)}]]
+                        :on-change #(reset! session-title (-> % .-target .-value))
+                        :value @session-title}]]
         [:> Grid {:item true :xs 12}
          [:> Select {:menu-portal-target (.-body js/document)
                      :menu-position "fixed"
@@ -82,26 +84,30 @@
                      :is-multi true
                      :class "gridchild"
                      :placeholder "Select Progressions"
-                     :value (:progressions @session)
-                     :on-change #(swap! session assoc :progressions %)   
+                     :value @selected-progression-titles
+                     :on-change #(reset! selected-progression-titles %)
                      :styles {:menu-portal #(-> % js->clj (assoc :zIndex 9999) clj->js)}
                      :options (map (fn [p] {:label (:title p) :value p}) @progressions)}]]
-        
+
         [:> Grid {:item true :xs 4 :sm 8}]
         [:> Grid {:item true :xs 4 :sm 2}
          [:> Button {:color "primary"
                      :class "gridchild"
                      :on-click (fn []
                                  (on-close)
-                                 (reset! session {:title "" :progressions []}))}
+                                 (on-progression-added {:title @session-title
+                                                        :progressions (map #(-> % .-value (js->clj :keywordize-keys true)) @selected-progression-titles)})
+                                 (reset! selected-progression-titles [])
+                                 (reset! session-title ""))}
           "OK"]]
-        
+
         [:> Grid {:item true :xs 4 :sm 2}
          [:> Button {:color "default"
                      :class "gridchild"
                      :on-click (fn []
                                  (on-close)
-                                 (reset! session {:title "" :progressions []}))}
+                                 (reset! selected-progression-titles [])
+                                 (reset! session-title ""))}
           "Cancel"]]]])))
 
 
@@ -132,7 +138,7 @@
 
 (defn sesssions []
   (let [add-dlg-open (r/atom false)
-        progressions (rf/subscribe [::subs/progressions])]
+        sessions (rf/subscribe [::subs/sessions])]
     (fn []
       [:div {:class "hideoverflow"}
        ; Main list with existing session
@@ -141,11 +147,15 @@
          [:> Card {:class "margin10"}
           [:> CardContent
            [:> List
-            (for [[i, progression] (map-indexed vector @progressions)]
+            (for [[i, session] (map-indexed vector @sessions)]
               [(arc ListItem) {:key i}
-               [(arc ListItemText) {:primary (:title progression) :secondary (str/join "," (:chords progression))}]
-               [(arc Button) {:on-click #(rf/dispatch [::events/delete-progression (:title progression)])} [(arc DeleteIcon)]]])]]]]]
+               [(arc ListItemText) {:primary (:title session)
+                                    :secondary (as-> session x
+                                                 (:progressions x)
+                                                 (map #(:title %) x)
+                                                 (str/join "," x))}]
 
+               [(arc Button) {:on-click #(rf/dispatch [::events/delete-session (:title session)])} [(arc DeleteIcon)]]])]]]]]
 
        ; Floating Action Button to add new progression
        [:> Fab {:color :primary :on-click #(reset! add-dlg-open true) :class "floatrightbottom"}
@@ -154,7 +164,35 @@
        ; Dialog for adding new Progression
        [add-session-dlg @add-dlg-open
         #(reset! add-dlg-open false)
-        #(rf/dispatch [::events/add-progression %])]])))
+        #(rf/dispatch [::events/add-session %])]])))
+
+(defn practice []
+  (let [sessions (rf/subscribe [::subs/sessions])
+        selected-session (r/atom (first @sessions))]
+    (fn []
+      [:div {:class "hideoverflow"}
+       [:> Grid {:container true :spacing 3 :justify "center"}
+        [:> Grid {:item true :xs 12 :sm 6}
+         [:> Card {:class "margin10"}
+          [:> CardContent
+           [:> Grid {:container true :class "gridchild" :spacing 3}
+            [:> Grid {:item true :class "gridchild" :xs 10}
+             [:> Select {:options (map (fn [s] {:label (:title s) :value s}) @sessions)
+                         :menu-portal-target (.-body js/document)
+                         :menu-position "fixed"
+                         :menu-placement "auto"
+                         :value {:label (:title @selected-session) :value @selected-session}
+                         :on-change #(reset! selected-session (-> % .-value (js->clj :keywordize-keys true)))}]]
+            [:> Grid {:item true :class "gridchild" :xs 2}
+             [:> ToggleButton {:class "gridchild"}
+              [:> ShuffleIcon]]]
+            [:> Grid {:item true :xs 12 :class "gridchild"}
+             [:> List
+              (for [[i, progression] (map-indexed vector (:progressions @selected-session))]
+                [(arc ListItem) {:key i}
+                 [(arc ListItemText) {:primary (:title progression) :secondary (str/join "," (:chords progression))}]
+                 [(arc ToggleButton)
+                  [(arc ShuffleIcon)]]])]]]]]]]])))
 
 (defn main-panel []
   (let []
@@ -174,4 +212,4 @@
       :main [:span "main"]
       :progressions [progressions]
       :sessions [sesssions]
-      :practice [:span "Practice"]]]))
+      :practice [practice]]]))

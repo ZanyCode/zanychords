@@ -18,7 +18,7 @@
                                ["/progressions" :progressions]
                                ["/sessions" :sessions]
                                ["/practice" :practice]]
-              :initial-db     {:progressions []}
+              :initial-db     {:progressions [] :sessions []}
               :root-component [views/main-panel]
               :debug?         true}))
   (re-frame/dispatch-sync [::events/initialize-db])
