@@ -1,0 +1,1 @@
+{"version":3,"sources":["zanychords/config.cljs"],"mappings":";;AAEA,AAAKA,AACMC","names":["zanychords.config/debug?","js/goog.DEBUG"],"sourcesContent":["(ns zanychords.config)\r\n\r\n(def debug?\r\n  ^boolean goog.DEBUG)\r\n"]}

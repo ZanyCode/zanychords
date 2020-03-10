@@ -14,11 +14,12 @@
     (println "dev mode")))
 
 (defn ^:export init []
-  (k/start!  {:routes         [["/" :main]
-                               ["/progressions" :progressions]
-                               ["/sessions" :sessions]
-                               ["/practice" :practice]]
-              :initial-db     {:progressions [] :sessions []}
-              :root-component [views/main-panel]
-              :debug?         true}))
+  (let [base-url (if config/debug? "/" "/zanychords/")]
+    (k/start!  {:routes         
+                [[base-url :progressions]
+                 [(str base-url "sessions") :sessions]
+                 [(str base-url "practice") :practice]]
+                :initial-db     {:progressions [] :sessions []}
+                :root-component [views/main-panel]
+                :debug?         true})))
   (re-frame/dispatch-sync [::events/initialize-db])

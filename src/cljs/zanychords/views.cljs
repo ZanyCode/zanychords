@@ -203,9 +203,9 @@
                                 nil 0 :main 0 :progressions 0 :sessions 1 :practice 2)
                 :centered true}
 
-       [:> Tab {:label "Progressions" :component :a :href "progressions"}]
-       [:> Tab {:label "Sessions" :component :a :href "sessions"}]
-       [:> Tab {:label "Practice" :component :a :href "practice"}]]]
+       [:> Tab {:label "Progressions" :component :a :href (k/path-for [:progressions])}]
+       [:> Tab {:label "Sessions" :component :a :href (k/path-for [:sessions])}]
+       [:> Tab {:label "Practice" :component :a :href (k/path-for [:practice])}]]]
 
      [k/switch-route (fn [route] (-> route :data :name))
       nil [:span "INVALID ROUTE"]

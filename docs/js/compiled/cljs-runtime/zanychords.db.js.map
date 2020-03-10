@@ -1,0 +1,1 @@
+{"version":3,"sources":["zanychords/db.cljs"],"mappings":";;AAEA,AAAA,AAAA,AAAA,AAAKA","names":["zanychords.db/default-db"],"sourcesContent":["(ns zanychords.db)\r\n\r\n(def default-db\r\n  {:name \"re-frame\"})\r\n"]}
