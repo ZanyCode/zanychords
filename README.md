@@ -1,7 +1,6 @@
 # zanychords
 
-A [re-frame](https://github.com/day8/re-frame) application designed to ... well, that part is up to
-you.
+A [re-frame](https://github.com/day8/re-frame) application designed to assist with guitar practice. Allows entering chord progressions, adding multiple progressions to one session, and practicing all progressions of one session in randomized order. [ZanyChords](https://themagpieguy.github.io/zanychords/) is a static SPA using local storage for persistence, so there is no backend.
 
 ## Getting Started
 
