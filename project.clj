@@ -52,4 +52,4 @@
 
    :prod {}}
 
-  :prep-tasks [["garden" "once"]])
+  :prep-tasks [])

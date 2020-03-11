@@ -6,6 +6,7 @@
    [zanychords.events :as events]
    [clojure.string :as str]
    ["@material-ui/core/AppBar" :default AppBar]
+   ["@material-ui/core/ToolBar" :default ToolBar]
    ["@material-ui/core/Tabs" :default Tabs]
    ["@material-ui/core/Tab" :default Tab]
    ["@material-ui/core/Fab" :default Fab]
@@ -23,9 +24,13 @@
    ["@material-ui/core/MenuItem" :default MenuItem]
    ["@material-ui/lab/ToggleButton" :default ToggleButton]
    ["@material-ui/core/Grid" :default Grid]
+   ["@material-ui/core/IconButton" :default IconButton]
    ["@material-ui/icons/Add" :default AddIcon]
    ["@material-ui/icons/Delete" :default DeleteIcon]
    ["@material-ui/icons/Shuffle" :default ShuffleIcon]
+   ["@material-ui/icons/PlayArrow" :default PlayIcon]
+   ["@material-ui/icons/Close" :default CloseIcon]
+   ["@material-ui/icons/Pause" :default PauseIcon]
    ["react-select" :default Select]
    [kee-frame.core :as k]))
 
@@ -110,7 +115,6 @@
                                  (reset! session-title ""))}
           "Cancel"]]]])))
 
-
 (defn progressions []
   (let [add-dlg-open (r/atom false)
         progressions (rf/subscribe [::subs/progressions])]
@@ -166,9 +170,18 @@
         #(reset! add-dlg-open false)
         #(rf/dispatch [::events/add-session %])]])))
 
+(defn pratice-progressions-dialog [is-open on-close]
+  (fn [is-open on-close]
+    [:> Dialog {:full-screen true :open is-open :classes {:paper "dlgpaper"}}
+     [:> AppBar
+      [:> ToolBar
+       [:> IconButton {:on-click on-close}
+        [:> CloseIcon]]]]]))
+
 (defn practice []
   (let [sessions (rf/subscribe [::subs/sessions])
-        selected-session (r/atom (first @sessions))]
+        selected-session (r/atom (first @sessions))
+        practice-dlg-open (r/atom false)]
     (fn []
       [:div {:class "hideoverflow"}
        [:> Grid {:container true :spacing 3 :justify "center"}
@@ -192,7 +205,14 @@
                 [(arc ListItem) {:key i}
                  [(arc ListItemText) {:primary (:title progression) :secondary (str/join "," (:chords progression))}]
                  [(arc ToggleButton)
-                  [(arc ShuffleIcon)]]])]]]]]]]])))
+                  [(arc ShuffleIcon)]]])]]]]]]
+
+        ; Practice progression dialog
+        [pratice-progressions-dialog @practice-dlg-open #(reset! practice-dlg-open false)]
+
+        ; Floating Action Button to start practice
+        [:> Fab {:color :primary :class "floatrightbottom" :on-click #(reset! practice-dlg-open true)}
+         [:> PlayIcon]]]])))
 
 (defn main-panel []
   (let []

@@ -9,4 +9,5 @@
   [:.margin10 {:margin "10px"}]
   [:.hideoverflow {:overflow "hidden"}]
   [:.gridchild {:width "100%"}]
+  ;[:.dlgpaper {:width "100%" :height "100%" :max-width "10000px"}]
   )
