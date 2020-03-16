@@ -37,6 +37,11 @@
 ;There seems to be a bug where using the :> shortcut for react components causes a weird error ("Cannot convert a Symbol value to a string") so we just create our own shortcut with blackjack and... you know.
 (def arc r/adapt-react-class)
 
+(def session {:title "Fette Session" :progressions [{:title "p1" :chords ["A1" "B1" "C1"]}
+                                                    {:title "p2" :chords ["A2" "B2" "C2"]}
+                                                    {:title "p3" :chords ["A3" "B3" "C3"]}
+                                                    {:title "p4" :chords ["A4" "B4" "C4"]}]})
+(def test-t 22)
 (defn add-progression-dlg [is-open on-close on-progression-added]
   (let [progression (r/atom {:title "" :chords ""})]
     (fn [is-open on-close on-progression-added]
@@ -184,6 +189,7 @@
         practice-dlg-open (r/atom false)]
     (fn []
       [:div {:class "hideoverflow"}
+       [:> Dialog {:full-screen true}]
        [:> Grid {:container true :spacing 3 :justify "center"}
         [:> Grid {:item true :xs 12 :sm 6}
          [:> Card {:class "margin10"}

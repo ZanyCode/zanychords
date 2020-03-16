@@ -46,7 +46,7 @@
                             ["shell" "karma" "start" "--single-run" "--reporters" "junit,dots"]]}
 
   :profiles
-  {:dev2
+  {:dev
    {:dependencies [[binaryage/devtools "1.0.0"]]
     :source-paths ["dev"]}
 
