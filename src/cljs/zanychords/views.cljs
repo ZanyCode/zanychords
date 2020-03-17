@@ -37,11 +37,27 @@
 ;There seems to be a bug where using the :> shortcut for react components causes a weird error ("Cannot convert a Symbol value to a string") so we just create our own shortcut with blackjack and... you know.
 (def arc r/adapt-react-class)
 
-(def session {:title "Fette Session" :progressions [{:title "p1" :chords ["A1" "B1" "C1"]}
-                                                    {:title "p2" :chords ["A2" "B2" "C2"]}
-                                                    {:title "p3" :chords ["A3" "B3" "C3"]}
-                                                    {:title "p4" :chords ["A4" "B4" "C4"]}]})
-(def test-t 22)
+(def session {:title "Fette Session" :shuffle true :progressions [{:title "p1" :chords ["A1" "B1" "C1"] :shuffle true :reps 1}
+                                                                  {:title "p2" :chords ["A2" "B2" "C2"] :shuffle true :reps 2}
+                                                                  {:title "p3" :chords ["A3" "B3" "C3"] :shuffle false :reps 1}
+                                                                  {:title "p4" :chords ["A4" "B4" "C4"] :shuffle false :reps 1}]})
+
+; Takes a session and returns a lazy sequence containing a
+; sliding window of size 3 with a sequence of chords
+(defn get-chord-seq [session]
+  (->> (repeatedly
+         (fn [] (->> session
+                     (#(update % :progressions (if (:shuffle %) shuffle identity)))
+                     :progressions
+                     (map #(update % :chords (if (:shuffle %) shuffle identity)))
+                     (map #(update % :chords (fn [c] (flatten (repeat (:reps %) c)))))
+                     (map #(map (fn [c] [c (:title %)]) (:chords %)))
+                     (apply concat))
+           ))
+       (apply concat)
+       (partition 3 1)
+       ))
+
 (defn add-progression-dlg [is-open on-close on-progression-added]
   (let [progression (r/atom {:title "" :chords ""})]
     (fn [is-open on-close on-progression-added]
