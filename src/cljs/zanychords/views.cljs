@@ -22,6 +22,7 @@
    ["@material-ui/core/TextField" :default TextField]
    ["@material-ui/core/Button" :default Button]
    ["@material-ui/core/MenuItem" :default MenuItem]
+   ["@material-ui/core/Input" :default Input]
    ["@material-ui/lab/ToggleButton" :default ToggleButton]
    ["@material-ui/core/Grid" :default Grid]
    ["@material-ui/core/IconButton" :default IconButton]
@@ -37,8 +38,8 @@
 ;There seems to be a bug where using the :> shortcut for react components causes a weird error ("Cannot convert a Symbol value to a string") so we just create our own shortcut with blackjack and... you know.
 (def arc r/adapt-react-class)
 
-(def session {:title "Fette Session" :shuffle true :progressions [{:title "p1" :chords ["A1" "B1" "C1"] :shuffle true :reps 1}
-                                                                  {:title "p2" :chords ["A2" "B2" "C2"] :shuffle true :reps 2}
+(def session {:title "Fette Session" :shuffle true :progressions [{:title "p1" :chords ["A1" "B1" "C1"] :shuffle false :reps 1}
+                                                                  {:title "p2" :chords ["A2" "B2" "C2"] :shuffle false :reps 1}
                                                                   {:title "p3" :chords ["A3" "B3" "C3"] :shuffle false :reps 1}
                                                                   {:title "p4" :chords ["A4" "B4" "C4"] :shuffle false :reps 1}]})
 
@@ -47,7 +48,7 @@
 (defn get-chord-seq [session]
   (->> (repeatedly
          (fn [] (->> session
-                     (#(update % :progressions (if (:shuffle %) shuffle identity)))
+                     (#(update % :progressions shuffle))
                      :progressions
                      (map #(update % :chords (if (:shuffle %) shuffle identity)))
                      (map #(update % :chords (fn [c] (flatten (repeat (:reps %) c)))))
@@ -89,7 +90,7 @@
                                  (reset! progression {:title "" :chords ""}))}
           "Cancel"]]]])))
 
-(defn add-session-dlg [is-open on-close on-progression-added]
+(defn add-session-dlg [is-open on-close on-session-added]
   (let [session-title (r/atom "")
         selected-progression-titles (r/atom [])
         progressions (rf/subscribe [::subs/progressions])]
@@ -117,12 +118,17 @@
 
         [:> Grid {:item true :xs 4 :sm 8}]
         [:> Grid {:item true :xs 4 :sm 2}
-         [:> Button {:color "primary"
-                     :class "gridchild"
+         [:> Button {:color    "primary"
+                     :class    "gridchild"
                      :on-click (fn []
                                  (on-close)
-                                 (on-progression-added {:title @session-title
-                                                        :progressions (map #(-> % .-value (js->clj :keywordize-keys true)) @selected-progression-titles)})
+                                 (on-session-added {:title        @session-title
+                                                    :shuffle      false
+                                                    :progressions (vec (map #(assoc
+                                                                               (-> % .-value (js->clj :keywordize-keys true))
+                                                                               :shuffle false
+                                                                               :reps 1)
+                                                                            @selected-progression-titles))})
                                  (reset! selected-progression-titles [])
                                  (reset! session-title ""))}
           "OK"]]
@@ -191,13 +197,32 @@
         #(reset! add-dlg-open false)
         #(rf/dispatch [::events/add-session %])]])))
 
-(defn pratice-progressions-dialog [is-open on-close]
-  (fn [is-open on-close]
-    [:> Dialog {:full-screen true :open is-open :classes {:paper "dlgpaper"}}
-     [:> AppBar
-      [:> ToolBar
-       [:> IconButton {:on-click on-close}
-        [:> CloseIcon]]]]]))
+(defn chord-triplet [c1 c2 c3]
+  (fn [c1 c2 c3]
+    [:> Grid {:container true :spacing 3 :align-items "center" :justify "center" :style {:height "100%"}}
+     [:> Grid {:item true :xs 4 :style {:height "20%"}}
+      [:> Card {:style {:height "100%" :display "flex" :justify-content "center" :align-items "center":text-align "center"} }
+       [:span (str c3)]]]
+     [:> Grid {:item true :xs 4 :style {:height "20%"}}
+      [:> Card {:style {:height "100%" :display "flex" :justify-content "center" :align-items "center":text-align "center"} }
+       [:span (str c2)]]]
+     [:> Grid {:item true :xs 4 :style {:height "30%"}}
+      [:> Card {:style {:height "100%" :display "flex" :justify-content "center" :align-items "center":text-align "center"} }
+       [:span (str c1)]]]
+     ]))
+
+(defn pratice-progressions-dialog [chord-seq is-open on-close ]
+  (let [idx (r/atom 1)]
+    (fn [selected-session is-open on-close]
+      (if is-open (js/setTimeout #(swap! idx inc) 2000) (reset! idx 0))
+      (let [[c1 c2 c3] (nth chord-seq @idx)]
+        (js/console.log "Triplet:" (str c1))
+        [:> Dialog {:full-screen true :open is-open :classes {:paper "dlgpaper"}}
+         [:> AppBar
+          [:> ToolBar
+           [:> IconButton {:on-click on-close}
+            [:> CloseIcon]]]]
+         [chord-triplet c1 c2 c3]]))))
 
 (defn practice []
   (let [sessions (rf/subscribe [::subs/sessions])
@@ -219,18 +244,33 @@
                          :value {:label (:title @selected-session) :value @selected-session}
                          :on-change #(reset! selected-session (-> % .-value (js->clj :keywordize-keys true)))}]]
             [:> Grid {:item true :class "gridchild" :xs 2}
-             [:> ToggleButton {:class "gridchild"}
+             [:> ToggleButton {:class "gridchild"
+                               :value "shuffleProgressions"
+                               :selected (:shuffle @selected-session)
+                               :on-change (fn [] (swap! selected-session #(update % :shuffle not)))}
               [:> ShuffleIcon]]]
             [:> Grid {:item true :xs 12 :class "gridchild"}
+
              [:> List
               (for [[i, progression] (map-indexed vector (:progressions @selected-session))]
                 [(arc ListItem) {:key i}
                  [(arc ListItemText) {:primary (:title progression) :secondary (str/join "," (:chords progression))}]
-                 [(arc ToggleButton)
-                  [(arc ShuffleIcon)]]])]]]]]]
+                 [(arc Input) {:type :number :placeholder "Repetitions"
+                               :on-change #(reset! selected-session
+                                                   (assoc-in @selected-session
+                                                             [:progressions i :reps] (-> % .-target .-value)))
+                               :value (-> @selected-session :progressions (nth i) :reps)}]
+                 [(arc ToggleButton) {:value    true
+                                      :selected (:shuffle progression)
+                                      :on-change #(swap! selected-session
+                                                         (fn [s] (update-in s [:progressions i :shuffle] not)))
+                                      }
+                  [(arc ShuffleIcon)]]
+                 ])]
+             ]]]]]
 
         ; Practice progression dialog
-        [pratice-progressions-dialog @practice-dlg-open #(reset! practice-dlg-open false)]
+        [pratice-progressions-dialog (get-chord-seq @selected-session) @practice-dlg-open #(reset! practice-dlg-open false)]
 
         ; Floating Action Button to start practice
         [:> Fab {:color :primary :class "floatrightbottom" :on-click #(reset! practice-dlg-open true)}
@@ -254,4 +294,5 @@
       :main [:span "main"]
       :progressions [progressions]
       :sessions [sesssions]
-      :practice [practice]]]))
+      :practice [practice]]
+     ]))
