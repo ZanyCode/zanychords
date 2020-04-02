@@ -32,6 +32,8 @@
    ["@material-ui/icons/PlayArrow" :default PlayIcon]
    ["@material-ui/icons/Close" :default CloseIcon]
    ["@material-ui/icons/Pause" :default PauseIcon]
+   ["@material-ui/icons/Restore" :default FasterIcon]
+   ["@material-ui/icons/Update" :default SlowerIcon]
    ["react-select" :default Select]
    [kee-frame.core :as k]))
 
@@ -199,30 +201,52 @@
 
 (defn chord-triplet [c1 c2 c3]
   (fn [c1 c2 c3]
-    [:> Grid {:container true :spacing 3 :align-items "center" :justify "center" :style {:height "100%"}}
-     [:> Grid {:item true :xs 4 :style {:height "20%"}}
-      [:> Card {:style {:height "100%" :display "flex" :justify-content "center" :align-items "center":text-align "center"} }
-       [:span (str c3)]]]
-     [:> Grid {:item true :xs 4 :style {:height "20%"}}
-      [:> Card {:style {:height "100%" :display "flex" :justify-content "center" :align-items "center":text-align "center"} }
-       [:span (str c2)]]]
+    [:> Grid {:container true :spacing 3 :align-items "center " :justify "center" :style {:height "100%" :margin-top "50px" :overflow "hidden"}}
+     [:> Grid {:item true :xs 12 :style {:height "20%"}}
+      [:> Card {:style {:height "100%" :display "flex" :justify-content "center" :align-items "center":text-align "center" :font-size "7em"} }
+       [:span (-> c2 second str)]]]
+      [:> Grid {:item true :xs 4 :style {:height "20%"}}
+      [:> Card {:style {:height "100%" :display "flex" :justify-content "center" :align-items "center":text-align "center" :font-size "3em"} }
+       [:span (-> c3 first str)]]]
      [:> Grid {:item true :xs 4 :style {:height "30%"}}
-      [:> Card {:style {:height "100%" :display "flex" :justify-content "center" :align-items "center":text-align "center"} }
-       [:span (str c1)]]]
-     ]))
+      [:> Card {:style {:height "100%" :display "flex" :justify-content "center" :align-items "center":text-align "center" :font-size "5em"} }
+       [:span (-> c2 first str)]]]
+     [:> Grid {:item true :xs 4 :style {:height "20%"}}
+      [:> Card {:style {:height "100%" :display "flex" :justify-content "center" :align-items "center":text-align "center" ::font-size "3em"} }
+       [:span (-> c1 first str)]]]]))
 
 (defn pratice-progressions-dialog [chord-seq is-open on-close ]
-  (let [idx (r/atom 1)]
-    (fn [selected-session is-open on-close]
-      (if is-open (js/setTimeout #(swap! idx inc) 2000) (reset! idx 0))
+  (let [idx (r/atom 1)
+        bpm (r/atom 120)
+        timeout-silent (r/atom true)]
+    (fn [chord-seq is-open on-close]
+      (if (and is-open @timeout-silent) (do
+                    (reset! timeout-silent false)
+                    (js/setTimeout (fn []
+                                     (reset! timeout-silent true)
+                                     (swap! idx inc)
+                                     )
+                                   (-> 60 (/ @bpm) (* 4000)))))
+      (if (not is-open)
+        (reset! idx 0))
+
       (let [[c1 c2 c3] (nth chord-seq @idx)]
-        (js/console.log "Triplet:" (str c1))
         [:> Dialog {:full-screen true :open is-open :classes {:paper "dlgpaper"}}
          [:> AppBar
           [:> ToolBar
            [:> IconButton {:on-click on-close}
             [:> CloseIcon]]]]
-         [chord-triplet c1 c2 c3]]))))
+         [:> Grid {:container true :justify "center" :style {:height "100%"}}
+          [:> Grid {:item true :xs 12  :style {:height "80%"}}
+           [chord-triplet c1 c2 c3]]
+          [:> Grid {:item true :xs 2}
+           [:> Button {:style {:width "100%"} :on-click #(swap! bpm (fn [x] (- x 10)))}
+            [:> SlowerIcon]]]
+          [:> Grid {:item true :xs 2}
+           [:> Input {:type "number" :value @bpm :on-change #(reset! bpm (-> % .-target .-value))}]]
+          [:> Grid {:item true :xs 2}
+           [:> Button {:style {:width "100%"} :on-click #(swap! bpm (fn [x] (+ x 10)))}
+            [:> FasterIcon]]]]]))))
 
 (defn practice []
   (let [sessions (rf/subscribe [::subs/sessions])
