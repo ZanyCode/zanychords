@@ -42,13 +42,13 @@ return rewrite_clj.zip.insert.insert(clojure.zip.down,clojure.zip.insert_child,c
  * Insert item as last child of the current node. Will insert a space if necessary.
  */
 rewrite_clj.zip.insert.append_child = (function rewrite_clj$zip$insert$append_child(zloc,item){
-return rewrite_clj.zip.insert.insert((function (p1__46336_SHARP_){
-var G__46337 = p1__46336_SHARP_;
-var G__46337__$1 = (((G__46337 == null))?null:clojure.zip.down(G__46337));
-if((G__46337__$1 == null)){
+return rewrite_clj.zip.insert.insert((function (p1__74538_SHARP_){
+var G__74539 = p1__74538_SHARP_;
+var G__74539__$1 = (((G__74539 == null))?null:clojure.zip.down(G__74539));
+if((G__74539__$1 == null)){
 return null;
 } else {
-return clojure.zip.rightmost(G__46337__$1);
+return clojure.zip.rightmost(G__74539__$1);
 }
 }),clojure.zip.append_child,cljs.core.PersistentVector.EMPTY,zloc,item);
 });

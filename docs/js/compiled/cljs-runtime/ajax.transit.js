@@ -4,10 +4,10 @@ goog.require('cognitect.transit');
 goog.require('ajax.interceptors');
 goog.require('ajax.protocols');
 goog.require('ajax.util');
-ajax.transit.transit_type = (function ajax$transit$transit_type(p__53191){
-var map__53192 = p__53191;
-var map__53192__$1 = (((((!((map__53192 == null))))?(((((map__53192.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__53192.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__53192):map__53192);
-var type = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__53192__$1,new cljs.core.Keyword(null,"type","type",1174270348));
+ajax.transit.transit_type = (function ajax$transit$transit_type(p__83319){
+var map__83320 = p__83319;
+var map__83320__$1 = (((((!((map__83320 == null))))?(((((map__83320.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__83320.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__83320):map__83320);
+var type = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__83320__$1,new cljs.core.Keyword(null,"type","type",1174270348));
 var or__4185__auto__ = type;
 if(cljs.core.truth_(or__4185__auto__)){
 return or__4185__auto__;
@@ -37,8 +37,8 @@ return cognitect.transit.write(writer,params);
  * :handlers Custom Transit handlers (refer to Transit documentation)
  */
 ajax.transit.transit_request_format = (function ajax$transit$transit_request_format(var_args){
-var G__53195 = arguments.length;
-switch (G__53195) {
+var G__83329 = arguments.length;
+switch (G__83329) {
 case 0:
 return ajax.transit.transit_request_format.cljs$core$IFn$_invoke$arity$0();
 
@@ -85,8 +85,8 @@ return cognitect.transit.read(reader,ajax.protocols._body(response));
  * :handlers Custom Transit handlers (refer to Transit documentation)
  */
 ajax.transit.transit_response_format = (function ajax$transit$transit_response_format(var_args){
-var G__53203 = arguments.length;
-switch (G__53203) {
+var G__83340 = arguments.length;
+switch (G__83340) {
 case 0:
 return ajax.transit.transit_response_format.cljs$core$IFn$_invoke$arity$0();
 

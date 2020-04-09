@@ -4,13 +4,13 @@ goog.require('re_frame.core');
 goog.require('re_frame.interceptor');
 goog.require('clojure.data');
 goog.require('kee_frame.state');
-kee_frame.debug.debug_enabled_QMARK_ = (function kee_frame$debug$debug_enabled_QMARK_(p__56465){
-var vec__56466 = p__56465;
-var event_key = cljs.core.nth.cljs$core$IFn$_invoke$arity$3(vec__56466,(0),null);
-var map__56469 = cljs.core.deref(kee_frame.state.debug_config);
-var map__56469__$1 = (((((!((map__56469 == null))))?(((((map__56469.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__56469.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__56469):map__56469);
-var blacklist = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__56469__$1,new cljs.core.Keyword(null,"blacklist","blacklist",1248093170));
-var events_QMARK_ = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__56469__$1,new cljs.core.Keyword(null,"events?","events?",-780512682),true);
+kee_frame.debug.debug_enabled_QMARK_ = (function kee_frame$debug$debug_enabled_QMARK_(p__84917){
+var vec__84918 = p__84917;
+var event_key = cljs.core.nth.cljs$core$IFn$_invoke$arity$3(vec__84918,(0),null);
+var map__84921 = cljs.core.deref(kee_frame.state.debug_config);
+var map__84921__$1 = (((((!((map__84921 == null))))?(((((map__84921.cljs$lang$protocol_mask$partition0$ & (64))) || ((cljs.core.PROTOCOL_SENTINEL === map__84921.cljs$core$ISeq$))))?true:false):false))?cljs.core.apply.cljs$core$IFn$_invoke$arity$2(cljs.core.hash_map,map__84921):map__84921);
+var blacklist = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__84921__$1,new cljs.core.Keyword(null,"blacklist","blacklist",1248093170));
+var events_QMARK_ = cljs.core.get.cljs$core$IFn$_invoke$arity$3(map__84921__$1,new cljs.core.Keyword(null,"events?","events?",-780512682),true);
 var and__4174__auto__ = cljs.core.deref(kee_frame.state.debug_QMARK_);
 if(cljs.core.truth_(and__4174__auto__)){
 var and__4174__auto____$1 = events_QMARK_;
@@ -33,10 +33,10 @@ kee_frame.debug.debug_interceptor = (function kee_frame$debug$debug_interceptor(
 return re_frame.interceptor.__GT_interceptor.cljs$core$IFn$_invoke$arity$variadic(cljs.core.prim_seq.cljs$core$IFn$_invoke$arity$2([new cljs.core.Keyword(null,"id","id",-1388402092),new cljs.core.Keyword(null,"debug","debug",-1608172596),new cljs.core.Keyword(null,"before","before",-1633692388),(function kee_frame$debug$debug_interceptor_$_debug_before(context){
 var event = re_frame.interceptor.get_coeffect.cljs$core$IFn$_invoke$arity$2(context,new cljs.core.Keyword(null,"event","event",301435442));
 if(cljs.core.truth_(kee_frame.debug.debug_enabled_QMARK_(event))){
-var G__56473_56500 = new cljs.core.Keyword(null,"log","log",-1595516004);
-var G__56474_56501 = "Handling event ";
-var G__56475_56502 = event;
-(re_frame.core.console.cljs$core$IFn$_invoke$arity$3 ? re_frame.core.console.cljs$core$IFn$_invoke$arity$3(G__56473_56500,G__56474_56501,G__56475_56502) : re_frame.core.console.call(null,G__56473_56500,G__56474_56501,G__56475_56502));
+var G__84931_84966 = new cljs.core.Keyword(null,"log","log",-1595516004);
+var G__84932_84967 = "Handling event ";
+var G__84933_84968 = event;
+(re_frame.core.console.cljs$core$IFn$_invoke$arity$3 ? re_frame.core.console.cljs$core$IFn$_invoke$arity$3(G__84931_84966,G__84932_84967,G__84933_84968) : re_frame.core.console.call(null,G__84931_84966,G__84932_84967,G__84933_84968));
 } else {
 }
 
@@ -53,12 +53,12 @@ return cljs.core.seq(effects);
 return and__4174__auto__;
 }
 })())){
-var G__56476_56503 = new cljs.core.Keyword(null,"log","log",-1595516004);
-var G__56477_56504 = "Side effects caused by event ";
-var G__56478_56505 = cljs.core.first(event);
-var G__56479_56506 = ": ";
-var G__56480_56507 = effects;
-(re_frame.core.console.cljs$core$IFn$_invoke$arity$5 ? re_frame.core.console.cljs$core$IFn$_invoke$arity$5(G__56476_56503,G__56477_56504,G__56478_56505,G__56479_56506,G__56480_56507) : re_frame.core.console.call(null,G__56476_56503,G__56477_56504,G__56478_56505,G__56479_56506,G__56480_56507));
+var G__84938_84970 = new cljs.core.Keyword(null,"log","log",-1595516004);
+var G__84939_84971 = "Side effects caused by event ";
+var G__84940_84972 = cljs.core.first(event);
+var G__84941_84973 = ": ";
+var G__84942_84974 = effects;
+(re_frame.core.console.cljs$core$IFn$_invoke$arity$5 ? re_frame.core.console.cljs$core$IFn$_invoke$arity$5(G__84938_84970,G__84939_84971,G__84940_84972,G__84941_84973,G__84942_84974) : re_frame.core.console.call(null,G__84938_84970,G__84939_84971,G__84940_84972,G__84941_84973,G__84942_84974));
 } else {
 }
 
@@ -69,28 +69,28 @@ return cljs.core.not_EQ_.cljs$core$IFn$_invoke$arity$2(new_db,new cljs.core.Keyw
 return and__4174__auto__;
 }
 })())){
-var vec__56481_56509 = clojure.data.diff(orig_db,new_db);
-var only_before_56510 = cljs.core.nth.cljs$core$IFn$_invoke$arity$3(vec__56481_56509,(0),null);
-var only_after_56511 = cljs.core.nth.cljs$core$IFn$_invoke$arity$3(vec__56481_56509,(1),null);
-var db_changed_QMARK__56512 = (((!((only_before_56510 == null)))) || ((!((only_after_56511 == null)))));
-if(db_changed_QMARK__56512){
-var G__56485_56513 = new cljs.core.Keyword(null,"group","group",582596132);
-var G__56486_56514 = "db clojure.data/diff for:";
-var G__56487_56515 = cljs.core.first(event);
-(re_frame.core.console.cljs$core$IFn$_invoke$arity$3 ? re_frame.core.console.cljs$core$IFn$_invoke$arity$3(G__56485_56513,G__56486_56514,G__56487_56515) : re_frame.core.console.call(null,G__56485_56513,G__56486_56514,G__56487_56515));
+var vec__84943_84975 = clojure.data.diff(orig_db,new_db);
+var only_before_84976 = cljs.core.nth.cljs$core$IFn$_invoke$arity$3(vec__84943_84975,(0),null);
+var only_after_84977 = cljs.core.nth.cljs$core$IFn$_invoke$arity$3(vec__84943_84975,(1),null);
+var db_changed_QMARK__84978 = (((!((only_before_84976 == null)))) || ((!((only_after_84977 == null)))));
+if(db_changed_QMARK__84978){
+var G__84947_84979 = new cljs.core.Keyword(null,"group","group",582596132);
+var G__84948_84980 = "db clojure.data/diff for:";
+var G__84949_84981 = cljs.core.first(event);
+(re_frame.core.console.cljs$core$IFn$_invoke$arity$3 ? re_frame.core.console.cljs$core$IFn$_invoke$arity$3(G__84947_84979,G__84948_84980,G__84949_84981) : re_frame.core.console.call(null,G__84947_84979,G__84948_84980,G__84949_84981));
 
-var G__56488_56517 = new cljs.core.Keyword(null,"log","log",-1595516004);
-var G__56489_56518 = "only before:";
-var G__56490_56519 = only_before_56510;
-(re_frame.core.console.cljs$core$IFn$_invoke$arity$3 ? re_frame.core.console.cljs$core$IFn$_invoke$arity$3(G__56488_56517,G__56489_56518,G__56490_56519) : re_frame.core.console.call(null,G__56488_56517,G__56489_56518,G__56490_56519));
+var G__84953_84982 = new cljs.core.Keyword(null,"log","log",-1595516004);
+var G__84954_84983 = "only before:";
+var G__84955_84984 = only_before_84976;
+(re_frame.core.console.cljs$core$IFn$_invoke$arity$3 ? re_frame.core.console.cljs$core$IFn$_invoke$arity$3(G__84953_84982,G__84954_84983,G__84955_84984) : re_frame.core.console.call(null,G__84953_84982,G__84954_84983,G__84955_84984));
 
-var G__56491_56523 = new cljs.core.Keyword(null,"log","log",-1595516004);
-var G__56492_56524 = "only after :";
-var G__56493_56525 = only_after_56511;
-(re_frame.core.console.cljs$core$IFn$_invoke$arity$3 ? re_frame.core.console.cljs$core$IFn$_invoke$arity$3(G__56491_56523,G__56492_56524,G__56493_56525) : re_frame.core.console.call(null,G__56491_56523,G__56492_56524,G__56493_56525));
+var G__84956_84992 = new cljs.core.Keyword(null,"log","log",-1595516004);
+var G__84957_84993 = "only after :";
+var G__84958_84994 = only_after_84977;
+(re_frame.core.console.cljs$core$IFn$_invoke$arity$3 ? re_frame.core.console.cljs$core$IFn$_invoke$arity$3(G__84956_84992,G__84957_84993,G__84958_84994) : re_frame.core.console.call(null,G__84956_84992,G__84957_84993,G__84958_84994));
 
-var G__56498_56526 = new cljs.core.Keyword(null,"groupEnd","groupEnd",-337721382);
-(re_frame.core.console.cljs$core$IFn$_invoke$arity$1 ? re_frame.core.console.cljs$core$IFn$_invoke$arity$1(G__56498_56526) : re_frame.core.console.call(null,G__56498_56526));
+var G__84959_84995 = new cljs.core.Keyword(null,"groupEnd","groupEnd",-337721382);
+(re_frame.core.console.cljs$core$IFn$_invoke$arity$1 ? re_frame.core.console.cljs$core$IFn$_invoke$arity$1(G__84959_84995) : re_frame.core.console.call(null,G__84959_84995));
 } else {
 }
 } else {
